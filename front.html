@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>InterioAI - AI Interior Designer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #251e3b;
+            overflow-x: hidden;
+        }
+
+        #welcomePage {
+            height: 100vh;
+            width: 100%;
+            background-image: url('https://ik.imagekit.io/InterioAI/welcomepage.png?updatedAt=1762237748675');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #welcomePage::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .welcome-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: white;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .welcome-content p {
+            font-size: 1.8rem;
+            margin-bottom: 3rem;
+            font-weight: 500;
+            text-shadow: 4px 4px 12px rgba(0, 0, 0, 0.9);
+            user-select: none;
+        }
+
+        .enter-button {
+            padding: 1.5rem 4.8rem;
+            font-size: 1.6rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 0.9rem;
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 12px 35px rgba(76, 175, 80, 1);
+            transition: all 0.3s ease;
+            user-select: none;
+            display: inline-block;
+        }
+
+        .enter-button:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(76, 175, 80, 1);
+        }
+
+        .enter-button:active {
+            transform: translateY(-1px);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            backdrop-filter: blur(15px);
+            background: rgba(5, 4, 4, 0.92);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 3px solid #4CAF50;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #e8f5e9;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            user-select: none;
+        }
+
+        header nav button {
+            background: #ff6b6b;
+            border: none;
+            color: white;
+            padding: 0.7rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4);
+        }
+
+        header nav button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 107, 107, 0.6);
+        }
+
+        #authPage {
+            background-image: url('https://ik.imagekit.io/InterioAI/login%20page.jpeg?updatedAt=1762237145854');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        #authPage::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-card {
+            max-width: 420px;
+            width: 100%;
+            margin: 0;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #251e3b;
+            font-size: 1.8rem;
+        }
+
+        .auth-card p {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+        }
+
+        .auth-card a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-card a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 2rem 1.5rem;
+            background-image: url('https://ik.imagekit.io/InterioAI/main%20page.jpeg?updatedAt=1762237161393');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: calc(100vh - 80px);
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container > * {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(76, 175, 80, 0.15);
+        }
+
+        .card h2 {
+            color: #251e3b;
+            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-top: 0.8rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.9rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 0.6rem;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.3);
+            background: #f8fff8;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.6rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(76, 175, 80, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(76, 175, 80, 0.6);
+        }
+
+        .flex {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .half {
+            flex: 1 1 calc(50% - 0.75rem);
+            min-width: 250px;
+        }
+
+        .palette-container {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .palette-option {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .palette-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .palette-option:hover .palette-circle {
+            transform: scale(1.15);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+        }
+
+        .palette-option.selected .palette-circle {
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.4), 0 6px 20px rgba(76, 175, 80, 0.3);
+            transform: scale(1.2);
+        }
+
+        .custom-color-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f8fff8 0%, #f0fff0 100%);
+            border-radius: 1rem;
+            border: 2px solid #4CAF50;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .custom-color-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(76, 175, 80, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .custom-color-section-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .custom-color-section label {
+            display: block;
+            font-weight: 700;
+            color: #251e3b;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+        }
+
+        .custom-color-input-wrapper {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .color-picker-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .custom-color-input-wrapper input[type="color"] {
+            width: 80px;
+            height: 80px;
+            padding: 0;
+            cursor: pointer;
+            border: 3px solid #4CAF50;
+            border-radius: 50%;
+            margin-bottom: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+
+        .custom-color-input-wrapper input[type="color"]:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+        }
+
+        .custom-color-input-wrapper input[type="color"]:active {
+            transform: scale(0.95);
+        }
+
+        .color-info {
+            flex: 1;
+        }
+
+        .custom-color-input-wrapper input[type="text"] {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #4CAF50;
+            border-radius: 0.6rem;
+            font-size: 0.95rem;
+            margin-bottom: 0;
+            background: white;
+            font-weight: 600;
+            color: #251e3b;
+            transition: all 0.3s ease;
+        }
+
+        .custom-color-input-wrapper input[type="text"]:focus {
+            outline: none;
+            border-color: #2e7d32;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.4);
+            background: #fafafa;
+        }
+
+        .color-hex-display {
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: white;
+            border-radius: 0.6rem;
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #4CAF50;
+            font-size: 0.9rem;
+            text-align: center;
+            border: 1px solid #4CAF50;
+        }
+
+        .slogan-section {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            padding: 3rem;
+            border-radius: 1.5rem;
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .slogan-section h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .slogan-section p {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .slogan-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .architectural-pattern {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: 0.1;
+            font-size: 3rem;
+            overflow: hidden;
+        }
+
+        .previous-designs {
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid #e0e0e0;
+        }
+
+        .previous-designs h3 {
+            color: #251e3b;
+            margin-bottom: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        .previous-items {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .previous-item {
+            background: linear-gradient(135deg, #f5f7ff 0%, #fff0f5 100%);
+            padding: 1rem;
+            border-radius: 0.8rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(76, 175, 80, 0.1);
+        }
+
+        .previous-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.2);
+        }
+
+        .previous-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 0.6rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .previous-item strong {
+            color: #4CAF50;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .previous-item small {
+            color: #999;
+            display: block;
+            margin-bottom: 0.8rem;
+        }
+
+        .palette-preview {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #4CAF50;
+            margin-right: 0.5rem;
+        }
+
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        #loadingOverlay.active {
+            display: flex;
+        }
+
+        .spinner-container {
+            text-align: center;
+        }
+
+        .spinner {
+            width: 150px;
+            height: 150px;
+            border: 10px solid rgba(76, 175, 80, 0.2);
+            border-top: 10px solid #4CAF50;
+            border-right: 10px solid #81C784;
+            border-radius: 50%;
+            animation: spin 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+            margin: 0 auto;
+            box-shadow: 0 0 30px rgba(76, 175, 80, 0.4);
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #loadingSpinner {
+            text-align: center;
+            margin-top: 1rem;
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 1.1rem;
+            display: none;
+        }
+
+        .estimation-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f9f9f9 0%, #fff 100%);
+            border-radius: 1.5rem;
+            border: 2px solid #4CAF50;
+            display: none !important;
+        }
+
+        .estimation-section.active {
+            display: block !important;
+        }
+
+        .estimation-section h3 {
+            color: #251e3b;
+            margin-bottom: 0.5rem;
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .estimation-section > p {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .estimation-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .estimation-table thead {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+        }
+
+        .estimation-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .estimation-table th:last-child,
+        .estimation-table td:last-child {
+            text-align: right;
+        }
+
+        .estimation-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .estimation-table tbody tr:hover {
+            background: #f5f5f5;
+            transition: background 0.3s ease;
+        }
+
+        .estimation-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .estimation-table tfoot tr {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+            font-weight: bold;
+        }
+
+        .estimation-table tfoot td {
+            padding: 15px;
+            font-size: 1.2rem;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #251e3b;
+        }
+
+        .item-category {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .item-price {
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .furniture-section {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #f5f7ff 0%, #fff0f5 100%);
+            border-radius: 1.5rem;
+            border: 2px solid #4CAF50;
+            display: none;
+        }
+
+        .furniture-section.active {
+            display: block;
+        }
+
+        .furniture-section h3 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            font-size: 1.6rem;
+            text-align: center;
+        }
+
+        .info-text {
+            color: #666;
+            font-size: 0.85rem;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .furniture-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+
+        .furniture-category {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            border-left: 4px solid #4CAF50;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .furniture-category h4 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .furniture-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .furniture-table thead {
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            color: white;
+        }
+
+        .furniture-table th,
+        .furniture-table td {
+            padding: 10px 12px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .furniture-table tbody tr:hover {
+            background: #f9f9f9;
+        }
+
+        .wood-select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            background: white;
+            color: #333;
+        }
+
+        .selected-section {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+            border-radius: 1.5rem;
+            border: 2px solid #4CAF50;
+            display: none;
+        }
+
+        .selected-section.active {
+            display: block;
+        }
+
+        .selected-section h3 {
+            color: #4CAF50;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .selected-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .selected-table thead {
+            background: linear-gradient(135deg, #2e7d32, #4CAF50);
+            color: white;
+        }
+
+        .selected-table th,
+        .selected-table td {
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .selected-table tfoot tr {
+            background: linear-gradient(135deg, #2e7d32, #4CAF50);
+            color: white;
+            font-weight: bold;
+        }
+
+        .quantity-input {
+            width: 80px;
+            padding: 8px;
+            border: 1px solid #4CAF50;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .price-highlight {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .total-summary {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+            border-radius: 1.5rem;
+            color: white;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+            display: none;
+        }
+
+        .total-summary.active {
+            display: block;
+        }
+
+        .total-amount {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin: 1rem 0;
+        }
+
+        .no-furniture-msg {
+            text-align: center;
+            padding: 1.5rem;
+            color: #999;
+            font-style: italic;
+        }
+
+        .btn-select {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .btn-remove {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .info-badge {
+            display: inline-block;
+            background: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .warning-text {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            color: #856404;
+            font-size: 0.9rem;
+        }
+
+        .success-text {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            color: #155724;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.3rem;
+            }
+
+            .welcome-content p {
+                font-size: 1.4rem;
+            }
+
+            .enter-button {
+                padding: 1.1rem 2.8rem;
+                font-size: 1.2rem;
+            }
+
+            .half {
+                flex: 1 1 100%;
+                min-width: auto;
+            }
+
+            .slogan-section h2 {
+                font-size: 1.8rem;
+            }
+
+            .slogan-section p {
+                font-size: 1.1rem;
+            }
+
+            .slogan-icon {
+                font-size: 3rem;
+            }
+
+            .custom-color-input-wrapper {
+                flex-direction: column;
+            }
+
+            .custom-color-section {
+                padding: 1.5rem;
+            }
+
+            .palette-circle {
+                width: 45px;
+                height: 45px;
+            }
+
+            .custom-color-input-wrapper input[type="color"] {
+                width: 70px;
+                height: 70px;
+            }
+
+            .estimation-table,
+            .furniture-table,
+            .selected-table {
+                font-size: 0.85rem;
+            }
+
+            .estimation-table th,
+            .estimation-table td,
+            .furniture-table th,
+            .furniture-table td,
+            .selected-table th,
+            .selected-table td {
+                padding: 8px 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.2rem;
+            }
+
+            .welcome-content p {
+                font-size: 1.1rem;
+            }
+
+            .enter-button {
+                padding: 0.9rem 1.8rem;
+                font-size: 1rem;
+            }
+
+            .card {
+                padding: 1.2rem;
+            }
+
+            .card h2 {
+                font-size: 1.4rem;
+            }
+
+            .slogan-section {
+                padding: 2rem;
+                min-height: 250px;
+            }
+
+            .slogan-section h2 {
+                font-size: 1.5rem;
+            }
+
+            .slogan-section p {
+                font-size: 0.95rem;
+            }
+
+            .slogan-icon {
+                font-size: 2.5rem;
+            }
+
+            .custom-color-input-wrapper {
+                flex-direction: column;
+            }
+
+            .custom-color-section {
+                padding: 1.2rem;
+            }
+
+            .palette-circle {
+                width: 40px;
+                height: 40px;
+            }
+
+            .custom-color-input-wrapper input[type="color"] {
+                width: 60px;
+                height: 60px;
+            }
+
+            .palette-container {
+                gap: 0.8rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadingOverlay">
+        <div class="spinner-container">
+            <div class="spinner"></div>
+        </div>
+    </div>
+
+    <div id="welcomePage">
+        <div class="welcome-content">
+            <button class="enter-button" onclick="goToAuth()">Enter InterioAI</button>
+        </div>
+    </div>
+
+    <div id="authPage" class="hidden">
+        <header>
+            <h1>InterioAI</h1>
+            <nav>
+                <button onclick="goToWelcome()">Back</button>
+            </nav>
+        </header>
+
+        <div class="auth-container">
+            <div class="auth-card" id="loginFormContainer">
+                <h2>Welcome Back</h2>
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <label>Email Address</label>
+                    <input type="email" required placeholder="your@email.com">
+                    <label>Password</label>
+                    <input type="password" required placeholder="Enter your password">
+                    <button type="submit" class="btn-primary">Login</button>
+                </form>
+                <p>Don't have an account? <a onclick="toggleAuthForms()">Sign up here</a></p>
+            </div>
+
+            <div class="auth-card hidden" id="signupFormContainer">
+                <h2>Create Your Account</h2>
+                <form id="signupForm" onsubmit="handleSignup(event)">
+                    <label>Full Name</label>
+                    <input type="text" required placeholder="Your name">
+                    <label>Email Address</label>
+                    <input type="email" required placeholder="your@email.com">
+                    <label>Password</label>
+                    <input type="password" required placeholder="Create a strong password">
+                    <button type="submit" class="btn-primary">Create Account</button>
+                </form>
+                <p>Already have an account? <a onclick="toggleAuthForms()">Login here</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboardPage" class="hidden">
+        <header>
+            <h1>InterioAI</h1>
+            <nav>
+                <button id="logoutBtn" onclick="goToWelcome()">Logout</button>
+            </nav>
+        </header>
+
+        <div class="container">
+            <div class="slogan-section">
+                <div class="slogan-icon">✨</div>
+                <h2>Design Your Dream Space</h2>
+                <p>Let AI help you create stunning interior designs that bring your vision to life.</p>
+                <div class="architectural-pattern">🏗️ 📐 🏛️ 🏢 🏗️ 📐 🏛️ 🏢</div>
+            </div>
+
+            <div class="card">
+                <h2>Create Your Interior Design</h2>
+                <form id="designForm" onsubmit="handleDesignSubmit(event)">
+                    <div class="flex">
+                        <div class="half">
+                            <label>Room Type</label>
+                            <select name="roomType" required>
+                                <option value="">-- Select Room --</option>
+                                <option value="Bedroom">Bedroom</option>
+                                <option value="Kitchen">Kitchen</option>
+                                <option value="Living Hall">Living Hall</option>
+                                <option value="Bathroom">Bathroom</option>
+                            </select>
+                        </div>
+                        <div class="half">
+                            <label>Interior Style</label>
+                            <select name="style" required>
+                                <option value="">-- Select Style --</option>
+                                <option value="Modern">Modern</option>
+                                <option value="Indian">Indian</option>
+                                <option value="Minimalist">Minimalist</option>
+                                <option value="Italian">Italian</option>
+                                <option value="Scandinavian">Scandinavian</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label>Upload Room Photo</label>
+                    <input type="file" name="photo" accept="image/*" required>
+
+                    <div class="flex">
+                        <div class="half">
+                            <label>Room Width (feet)</label>
+                            <select name="width" required>
+                                <option value="">-- Select Width --</option>
+                                <option value="8">8 ft (Compact)</option>
+                                <option value="10">10 ft (Small)</option>
+                                <option value="12">12 ft (Medium)</option>
+                                <option value="14">14 ft (Large)</option>
+                                <option value="16">16 ft (XL)</option>
+                            </select>
+                        </div>
+                        <div class="half">
+                            <label>Room Length (feet)</label>
+                            <select name="length" required>
+                                <option value="">-- Select Length --</option>
+                                <option value="10">10 ft (Compact)</option>
+                                <option value="12">12 ft (Small)</option>
+                                <option value="14">14 ft (Medium)</option>
+                                <option value="16">16 ft (Large)</option>
+                                <option value="18">18 ft (XL)</option>
+                                <option value="20">20 ft (XXL)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <label style="text-align: center; display: block; margin-bottom: 1rem;">Choose Color Palette</label>
+                    <div class="palette-container" id="paletteChoices">
+                        <span class="palette-option" data-color="pink" data-hex="#FFB6C1" title="Pink">
+                            <div class="palette-circle" style="background: #FFB6C1;"></div>
+                        </span>
+                        <span class="palette-option" data-color="lightblue" data-hex="#87CEEB" title="Light Blue">
+                            <div class="palette-circle" style="background: #87CEEB;"></div>
+                        </span>
+                        <span class="palette-option" data-color="lightgreen" data-hex="#90EE90" title="Light Green">
+                            <div class="palette-circle" style="background: #90EE90;"></div>
+                        </span>
+                        <span class="palette-option" data-color="lavender" data-hex="#E6E6FA" title="Lavender">
+                            <div class="palette-circle" style="background: #E6E6FA;"></div>
+                        </span>
+                        <span class="palette-option" data-color="yellow" data-hex="#FFD700" title="Yellow">
+                            <div class="palette-circle" style="background: #FFD700;"></div>
+                        </span>
+                        <span class="palette-option" data-color="orange" data-hex="#FFA500" title="Orange">
+                            <div class="palette-circle" style="background: #FFA500;"></div>
+                        </span>
+                    </div>
+                    <input type="hidden" name="palette">
+
+                    <div class="custom-color-section">
+                        <div class="custom-color-section-content">
+                            <label>Create Your Own Color</label>
+                            <div class="custom-color-input-wrapper">
+                                <input type="color" id="customColor" name="customColor" value="#4CAF50">
+                                <div class="color-info">
+                                    <input type="text" id="customColorName" name="customColorName" placeholder="Color name (optional)">
+                                    <div class="color-hex-display" id="colorHexDisplay">#4CAF50</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Generate Design</button>
+                    <div id="loadingSpinner">
+                        Generating design... Please wait.
+                    </div>
+                </form>
+
+                <div id="generatedResult" style="display:none; text-align:center; margin-top:2rem;"></div>
+
+                <div class="estimation-section" id="estimationSection">
+                    <h3>💰 Cost Estimation for Detected Items</h3>
+                    <p>Based on detected furniture and decor items in your generated design</p>
+                    <table class="estimation-table" id="estimationTable">
+                        <thead>
+                            <tr>
+                                <th>Detected Item</th>
+                                <th>Category</th>
+                                <th style="text-align: center;">Quantity</th>
+                                <th style="text-align: right;">Unit Price</th>
+                                <th style="text-align: right;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody id="estimationTableBody"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="4" style="text-align: right;">Grand Total:</td>
+                                <td style="text-align: right;" id="grandTotalCell">₹0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div id="furnitureConfigSection">
+                    <div class="furniture-section" id="furnitureSection">
+                        <h3>Pick Furniture for Your Room</h3>
+                        <p class="info-text" style="text-align: center; margin-bottom: 1rem;">
+                            Choose any option, select wood and quantity. Costs and details update instantly!
+                        </p>
+                        <div class="furniture-grid" id="furnitureGrid"></div>
+                    </div>
+
+                    <div class="selected-section" id="selectedSection">
+                        <h3>Your Selected Furniture</h3>
+                        <div class="warning-text" id="quantityInfo">
+                            ℹ️ Change quantity if you need more than one. Remove with a click.
+                        </div>
+                        <table class="selected-table" id="selectedTable">
+                            <thead>
+                                <tr>
+                                    <th>Furniture</th>
+                                    <th>Wood/Grade</th>
+                                    <th>Size</th>
+                                    <th>Unit Price</th>
+                                    <th>Qty</th>
+                                    <th>Total</th>
+                                    <th style="min-width:50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="selectedTableBody"></tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="5" style="text-align:right;">Room Total:</td>
+                                    <td id="roomTotal" class="price-highlight">₹0</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        <div id="noItemsMsg" class="no-furniture-msg">
+                            No furniture picked yet.
+                        </div>
+                    </div>
+
+                    <div class="total-summary" id="totalSummary">
+                        <h3>Overall Room Cost</h3>
+                        <div class="total-amount" id="grandTotal">₹0</div>
+                        <p id="furnitureCount">0 items selected</p>
+                        <div class="success-text" id="summaryInfo" style="margin-top:.5rem;text-align:left;"></div>
+                    </div>
+                </div>
+
+                <div class="previous-designs hidden" id="previousDesignsSection">
+                    <h3>Your Previous Designs</h3>
+                    <div class="previous-items" id="previousDesigns"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+/* ---------------------------
+   InterioAI — Robust furniture loader
+   Replace your existing <script> block with this.
+   --------------------------- */
+
+    // Backend API base URL - use relative path or environment-based
+    let API_BASE = "";
+    let currentRoomFurniture = null;
+
+    // Auto-detect backend URL (works with random ports)
+    fetch("/api/config")
+    .then(res => res.json())
+    .then(cfg => {
+        API_BASE = cfg.api_base;
+        console.log("✅ Backend detected at:", API_BASE);
+    })
+    .catch(err => {
+        console.error("❌ Failed to detect backend:", err);
+    });
+    let selectedFurniture = [];
+    let currentRoomType = 'bedroom';
+
+    function formatPrice(price) {
+        // defensive: ensure number
+        const n = Number(price) || 0;
+        return '₹' + n.toLocaleString('en-IN');
+    }
+
+    function getCategoryLabel(category) {
+        if (!category) return '';
+        return category.replace(/_/g, ' ')
+            .split(' ')
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' ');
+    }
+
+    // Helper: if server returns an array of items, group them into category -> [items]
+    function groupItemsByCategory(items) {
+        const grouped = {};
+        (items || []).forEach(it => {
+            const cat = it.category || it.category_name || it.type || 'uncategorized';
+            if (!grouped[cat]) grouped[cat] = [];
+            grouped[cat].push(it);
+        });
+        return grouped;
+    }
+
+    // Simple helper to escape HTML in cell values
+    function escapeHtml(s) {
+        if (s === null || s === undefined) return '';
+        return String(s)
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#39;');
+    }
+
+    // Robust populateFurnitureTable: accepts many response shapes
+    async function populateFurnitureTable(roomType) {
+        currentRoomType = roomType;
+        const furnitureGrid = document.getElementById('furnitureGrid');
+        const furnitureSection = document.getElementById('furnitureSection');
+
+        // Clear UI while loading
+        furnitureGrid && (furnitureGrid.innerHTML = '');
+        furnitureSection && furnitureSection.classList.remove('active');
+
+        // Map UI room names to backend keys
+        let backendKey = roomType.toLowerCase().replace(' ', '_');
+
+        try {
+            // If your backend requires auth, add headers here:
+            // const response = await fetch(`${API_BASE}/api/furniture/${backendKey}`, { headers: { 'Authorization': 'Bearer ' + token }});
+            const response = await fetch(`${API_BASE}/api/furniture/${backendKey}`);
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: Failed to fetch furniture`);
+            }
+
+            // Read response text and parse safely (supports JSON, NDJSON)
+            const rawText = await response.text();
+            let data = null;
+            try {
+                data = JSON.parse(rawText);
+            } catch (err) {
+                // Try NDJSON (newline-delimited JSON)
+                const lines = rawText.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+                const items = [];
+                for (let i = 0; i < lines.length; i++) {
+                    try { items.push(JSON.parse(lines[i])); } catch (e) { /* ignore non-json lines */ }
+                }
+                if (items.length > 0) {
+                    data = items;
+                    console.warn('[Interio] Response parsed as NDJSON.');
+                } else {
+                    console.error('[Interio] Failed to parse furniture response. Preview:', rawText.slice(0, 1000));
+                    throw new Error('Invalid JSON/NDJSON response from server');
+                }
+            }
+
+            // Normalize to category -> items map (roomData)
+            let roomData = null;
+
+            if (Array.isArray(data)) {
+                // server returned an array of items -> group by category
+                roomData = groupItemsByCategory(data);
+            } else if (data && typeof data === 'object') {
+                // try common wrapper keys or direct mapping
+                if (data.furniture) roomData = data.furniture;
+                else if (data.data) roomData = Array.isArray(data.data) ? groupItemsByCategory(data.data) : data.data;
+                else if (data.items) roomData = Array.isArray(data.items) ? groupItemsByCategory(data.items) : data.items;
+                else if (data.results) roomData = Array.isArray(data.results) ? groupItemsByCategory(data.results) : data.results;
+                else if (data[backendKey]) roomData = data[backendKey];
+                else {
+                    // maybe the server already returned a category->items map
+                    const values = Object.values(data);
+                    const looksLikeMap = values.length > 0 && values.every(v => Array.isArray(v));
+                    if (looksLikeMap) roomData = data;
+                }
+
+                // If still an array (rare), group it
+                if (Array.isArray(roomData)) {
+                    roomData = groupItemsByCategory(roomData);
+                }
+            } else {
+                roomData = {};
+            }
+
+            if (!roomData || Object.keys(roomData).length === 0) {
+                furnitureSection && furnitureSection.classList.remove('active');
+                console.warn(`No furniture data for room: ${roomType}`);
+                if (furnitureGrid) {
+                    furnitureGrid.innerHTML = `<div style="padding: 1rem; color: #444; text-align: center;">No furniture data available for <strong>${escapeHtml(roomType)}</strong>.</div>`;
+                }
+                currentRoomFurniture = {};
+                return;
+            }
+
+            // Ensure arrays for each category
+            Object.keys(roomData).forEach(cat => {
+                if (!Array.isArray(roomData[cat])) {
+                    if (roomData[cat] && typeof roomData[cat] === 'object') {
+                        roomData[cat] = Object.values(roomData[cat]);
+                    } else {
+                        roomData[cat] = [];
+                    }
+                }
+            });
+
+            currentRoomFurniture = roomData;
+
+            // Render categories and tables
+            Object.entries(roomData).forEach(([category, items]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'furniture-category';
+
+                let html = `<h4>${getCategoryLabel(category)}</h4>`;
+                html += `<table class="furniture-table">
+                    <thead>
+                        <tr>
+                            <th>Size/Type</th>
+                            <th>Wood Type</th>
+                            <th>Grade</th>
+                            <th>₹/sqft</th>
+                            <th>Area</th>
+                            <th>Cost</th>
+                            <th>Lifetime</th>
+                            <th>Select</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+                (items || []).forEach((item, idx) => {
+                    // graceful defaults if fields are missing
+                    const type = item.type || item.name || item.title || '—';
+                    const wood = item.wood || item.material || '—';
+                    const grade = item.grade || item.quality || '—';
+                    const rs_sqft = item.rs_sqft || item.rate || item.price_per_sqft || '—';
+                    const area_sqft = item.area_sqft || item.area || item.size || '—';
+                    const total = Number(item.total || item.cost || item.price || 0);
+                    const lifetime = item.lifetime || item.life || item.warranty || '—';
+                    const multiplyable = !!item.multiplyable;
+
+                    const safeCategory = String(category).replace(/'/g, "\\'");
+                    const totalFormatted = formatPrice(total);
+
+                    html += `<tr>
+                        <td>${escapeHtml(type)}</td>
+                        <td>${escapeHtml(wood)}</td>
+                        <td>${escapeHtml(grade)}</td>
+                        <td>${escapeHtml(rs_sqft)}</td>
+                        <td>${escapeHtml(area_sqft)} sq.ft</td>
+                        <td class="price-highlight">${totalFormatted}</td>
+                        <td>${escapeHtml(String(lifetime))} yrs</td>
+                        <td><button class="btn-select" onclick="addToSelection('${safeCategory}', ${idx})">Select</button></td>
+                    </tr>`;
+
+                    // normalize these fields back into the item for later use
+                    item.multiplyable = multiplyable;
+                    item.total = total;
+                    item.rs_sqft = rs_sqft;
+                    item.area_sqft = area_sqft;
+                });
+
+                html += `</tbody></table>`;
+                categoryDiv.innerHTML = html;
+                furnitureGrid && furnitureGrid.appendChild(categoryDiv);
+            });
+
+            furnitureSection && furnitureSection.classList.add('active');
+
+        } catch (error) {
+            console.error('Furniture load error:', error);
+            furnitureSection && furnitureSection.classList.remove('active');
+            if (furnitureGrid) {
+                furnitureGrid.innerHTML = `<div style="padding: 1rem; color: #d32f2f; text-align: center;"><strong>Error loading furniture:</strong> ${escapeHtml(error.message || String(error))}</div>`;
+            }
+            currentRoomFurniture = {};
+        }
+    }
+
+    function addToSelection(category, index) {
+        if (!currentRoomFurniture || !currentRoomFurniture[category]) {
+            alert('Furniture data not loaded. Please try again.');
+            return;
+        }
+
+        const items = currentRoomFurniture[category];
+        if (index >= items.length) {
+            alert('Invalid furniture selection.');
+            return;
+        }
+
+        const item = items[index];
+        const key = currentRoomType.toLowerCase().replace(' ', '_');
+
+        const already = selectedFurniture.find(
+            f => f.category === category && f.itemIndex === index && f.room === key
+        );
+        if (already) {
+            alert('This furniture option is already added.');
+            return;
+        }
+
+        selectedFurniture.push({
+            room: key,
+            category,
+            itemIndex: index,
+            ...item,
+            quantity: item.multiplyable ? 1 : 1
+        });
+
+        updateSelectionTable();
+    }
+
+    function updateSelectionTable() {
+        const tbody = document.getElementById('selectedTableBody');
+        const noItemsMsg = document.getElementById('noItemsMsg');
+        const selectedSection = document.getElementById('selectedSection');
+        const totalSummary = document.getElementById('totalSummary');
+
+        if (selectedFurniture.length === 0) {
+            if (tbody) tbody.innerHTML = '';
+            if (noItemsMsg) noItemsMsg.style.display = 'block';
+            if (selectedSection) selectedSection.classList.remove('active');
+            if (totalSummary) totalSummary.classList.remove('active');
+            return;
+        }
+
+        if (noItemsMsg) noItemsMsg.style.display = 'none';
+        if (selectedSection) selectedSection.classList.add('active');
+        if (totalSummary) totalSummary.classList.add('active');
+
+        if (tbody) tbody.innerHTML = '';
+        let roomTotal = 0;
+
+        selectedFurniture.forEach((item, idx) => {
+            const qtyInput = document.getElementById(`qty-${idx}`);
+            const qty = item.multiplyable
+                ? parseInt(qtyInput?.value || item.quantity || 1)
+                : 1;
+
+            const totalCost = (Number(item.total) || 0) * qty;
+            roomTotal += totalCost;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>
+                    <strong>${getCategoryLabel(item.category)}</strong><br/>
+                    <small>${escapeHtml(item.type || item.name || item.title || '')}</small>
+                </td>
+                <td>
+                    <span class="info-badge">${escapeHtml(item.wood || item.material || '')}</span><br/>
+                    <small>${escapeHtml(item.grade || item.quality || '')}</small>
+                </td>
+                <td>${escapeHtml(item.area_sqft || item.area || '')} sq.ft<br/><small>${escapeHtml(item.rs_sqft || '')} ₹/sq.ft</small></td>
+                <td class="price-highlight">${formatPrice(item.total)}</td>
+                <td>
+                    ${item.multiplyable
+                        ? `<input type="number" id="qty-${idx}" class="quantity-input" value="${qty}" min="1" max="10" onchange="updateSelectionTable()">`
+                        : '<strong>1</strong>'
+                    }
+                </td>
+                <td class="price-highlight">${formatPrice(totalCost)}</td>
+                <td><button class="btn-remove" onclick="removeFromSelection(${idx})">Remove</button></td>
+            `;
+            tbody && tbody.appendChild(tr);
+        });
+
+        const roomTotalEl = document.getElementById('roomTotal');
+        const grandTotalEl = document.getElementById('grandTotal');
+        const furnitureCountEl = document.getElementById('furnitureCount');
+
+        if (roomTotalEl) roomTotalEl.textContent = formatPrice(roomTotal);
+        if (grandTotalEl) grandTotalEl.textContent = formatPrice(roomTotal);
+        if (furnitureCountEl) furnitureCountEl.textContent = `${selectedFurniture.length} items selected`;
+
+        const summaryInfo = document.getElementById('summaryInfo');
+        const budgetItems = selectedFurniture.filter(f => (f.budget || '').toString().toLowerCase() === 'budget').length;
+        const midItems = selectedFurniture.filter(f => (f.budget || '').toString().toLowerCase() === 'middle').length;
+        const premiumItems = selectedFurniture.filter(f => (f.budget || '').toString().toLowerCase() === 'premium').length;
+
+        if (summaryInfo) {
+            summaryInfo.innerHTML = `
+                <strong>Furniture Mix:</strong><br/>
+                🟢 Budget: ${budgetItems} &nbsp;&nbsp; 🟡 Mid: ${midItems} &nbsp;&nbsp; 💎 Premium: ${premiumItems}
+            `;
+        }
+    }
+
+    function removeFromSelection(idx) {
+        selectedFurniture.splice(idx, 1);
+        updateSelectionTable();
+    }
+
+    window.FurnitureConfig = {
+        displayFurnitureForRoom: (roomType) => {
+            populateFurnitureTable(roomType);
+            const section = document.getElementById('furnitureConfigSection');
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        },
+        getSelectedFurniture: () => selectedFurniture,
+        getTotalCost: () => {
+            let total = 0;
+            selectedFurniture.forEach((item, idx) => {
+                const qty = item.multiplyable
+                    ? parseInt(document.getElementById(`qty-${idx}`)?.value || 1)
+                    : 1;
+                total += (Number(item.total) || 0) * qty;
+            });
+            return total;
+        }
+    };
+
+    function goToWelcome() {
+        if (event && event.target && event.target.id === 'logoutBtn') {
+            localStorage.removeItem('loggedInUser');
+        }
+        const welcome = document.getElementById('welcomePage');
+        const auth = document.getElementById('authPage');
+        const dash = document.getElementById('dashboardPage');
+        if (welcome) welcome.classList.remove('hidden');
+        if (auth) auth.classList.add('hidden');
+        if (dash) dash.classList.add('hidden');
+    }
+
+    function goToAuth() {
+        const welcome = document.getElementById('welcomePage');
+        const auth = document.getElementById('authPage');
+        if (welcome) welcome.classList.add('hidden');
+        if (auth) auth.classList.remove('hidden');
+    }
+
+    function goToDashboard() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) {
+            alert('Please login first.');
+            goToAuth();
+            return;
+        }
+
+        const welcome = document.getElementById('welcomePage');
+        const auth = document.getElementById('authPage');
+        const dash = document.getElementById('dashboardPage');
+        if (welcome) welcome.classList.add('hidden');
+        if (auth) auth.classList.add('hidden');
+        if (dash) dash.classList.remove('hidden');
+        loadPreviousDesigns();
+    }
+
+    function toggleAuthForms() {
+        const loginCont = document.getElementById('loginFormContainer');
+        const signupCont = document.getElementById('signupFormContainer');
+        if (loginCont) loginCont.classList.toggle('hidden');
+        if (signupCont) signupCont.classList.toggle('hidden');
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+        const email = event.target.querySelector('input[type="email"]').value;
+        const password = event.target.querySelector('input[type="password"]').value;
+
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const foundUser = users.find(u => u.email === email && u.password === password);
+
+        if (!foundUser) {
+            alert('Invalid email or password.');
+            return;
+        }
+
+        localStorage.setItem('loggedInUser', email);
+        goToDashboard();
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) loginForm.reset();
+    }
+
+    function handleSignup(event) {
+        event.preventDefault();
+        const name = event.target.querySelector('input[placeholder="Your name"]').value;
+        const email = event.target.querySelector('input[placeholder="your@email.com"]').value;
+        const password = event.target.querySelector('input[placeholder="Create a strong password"]').value;
+
+        let users = JSON.parse(localStorage.getItem('users') || '[]');
+        if (users.find(u => u.email === email)) {
+            alert('User already exists. Please login.');
+            return;
+        }
+
+        users.push({ name, email, password });
+        localStorage.setItem('users', JSON.stringify(users));
+        alert('Account created successfully! Please login.');
+        toggleAuthForms();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const paletteContainer = document.getElementById('paletteChoices');
+
+        paletteContainer?.addEventListener('click', (e) => {
+            const option = e.target.closest('.palette-option');
+            if (option) {
+                document.querySelectorAll('.palette-option').forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                const palInput = document.querySelector('input[name="palette"]');
+                if (palInput) palInput.value = option.dataset.color;
+            }
+        });
+
+        const customColorInput = document.getElementById('customColor');
+        const colorHexDisplay = document.getElementById('colorHexDisplay');
+
+        if (customColorInput) {
+            customColorInput.addEventListener('input', (e) => {
+                if (colorHexDisplay) colorHexDisplay.textContent = e.target.value.toUpperCase();
+            });
+        }
+
+        const roomSelect = document.querySelector('select[name="roomType"]');
+        if (roomSelect) {
+            roomSelect.addEventListener('change', (e) => {
+                const roomType = e.target.value;
+                if (!roomType) return;
+
+                // Use room type as-is; backend handles mapping
+                FurnitureConfig.displayFurnitureForRoom(roomType);
+            });
+        }
+    });
+
+    function handleDesignSubmit(event) {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const roomType = formData.get('roomType');
+        const style = formData.get('style');
+        const width = formData.get('width');
+        const length = formData.get('length');
+
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        loadingOverlay?.classList.add('active');
+        if (loadingSpinner) loadingSpinner.style.display = 'block';
+
+        fetch(`${API_BASE}/api/generate`, {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                loadingOverlay?.classList.remove('active');
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
+
+                if (data.success) {
+                    const generatedResult = document.getElementById('generatedResult');
+                    if (generatedResult) {
+                        generatedResult.innerHTML = `
+                            <h3 style="color:#251e3b; margin-bottom:1rem;">AI Design Transformation</h3>
+                            <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+                                <div>
+                                    <h4 style="color:#555; margin-bottom:0.5rem;">Before</h4>
+                                    <img src="${escapeHtml(data.before_url || data.beforeUrl || '')}" alt="Before" style="max-width:45vw; border-radius:1rem; box-shadow:0 8px 25px rgba(0,0,0,0.2);" onerror="console.error('Failed to load before image')">
+                                </div>
+                                <div>
+                                    <h4 style="color:#555; margin-bottom:0.5rem;">After</h4>
+                                    <img src="${escapeHtml(data.after_url || data.afterUrl || data.after || '')}" alt="After" style="max-width:45vw; border-radius:1rem; box-shadow:0 8px 25px rgba(0,0,0,0.2);" onerror="console.error('Failed to load after image')">
+                                </div>
+                            </div>
+                        `;
+                        generatedResult.style.display = 'block';
+                    }
+
+                    const estimationSection = document.getElementById('estimationSection');
+                    estimationSection?.classList.add('active');
+
+                    setTimeout(() => {
+                        const generatedResultEl = document.getElementById('generatedResult');
+                        generatedResultEl?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 500);
+                } else {
+                    alert('Error: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                loadingOverlay?.classList.remove('active');
+                if (loadingSpinner) loadingSpinner.style.display = 'none';
+                console.error('Connection error:', error);
+                alert('Error connecting to backend. Make sure it is running on port 5000.');
+            });
+    }
+
+    function loadPreviousDesigns() {
+        const loggedInUser = localStorage.getItem('loggedInUser');
+        if (!loggedInUser) return;
+
+        const users = JSON.parse(localStorage.getItem('users') || '[]');
+        const user = users.find(u => u.email === loggedInUser);
+
+        if (user && user.designs && user.designs.length > 0) {
+            const previousDesignsSection = document.getElementById('previousDesignsSection');
+            const previousDesigns = document.getElementById('previousDesigns');
+
+            if (previousDesigns) {
+                previousDesigns.innerHTML = user.designs.map(design => `
+                    <div class="previous-item">
+                        <strong>${escapeHtml(design.room_type || design.roomType || '')}</strong>
+                        <small>${escapeHtml(design.style || '')} Style</small>
+                        <div class="palette-preview" style="background: ${escapeHtml(design.palette || '')};"></div>
+                        <p>${escapeHtml(design.width || '')} × ${escapeHtml(design.length || '')}</p>
+                    </div>
+                `).join('');
+            }
+
+            previousDesignsSection?.classList.remove('hidden');
+        }
+    }
+</script>

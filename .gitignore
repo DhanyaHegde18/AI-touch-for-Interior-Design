@@ -1,0 +1,20 @@
+# Images
+#*.jpg
+#*.png
+
+# Database
+*.db
+
+# Outputs
+#output/
+runs/
+uploads/
+
+# Reports
+*.txt
+__pycache__/
+venv/
+node_modules/
+.cache/
+.ipynb_checkpoints/
+.env
