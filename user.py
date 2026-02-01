@@ -9,10 +9,10 @@ import os, time, shutil, traceback, random
 # Try to import AI renderer
 try:
     from image_to_image_renderer import ImageToImageRenderer
-    print("✅ ImageToImageRenderer imported successfully")
+    print("ImageToImageRenderer imported successfully")
     AI_RENDERER_AVAILABLE = True
 except Exception as e:
-    print(f"⚠️ ImageToImageRenderer import failed: {e}")
+    print(f"ImageToImageRenderer import failed: {e}")
     ImageToImageRenderer = None
     AI_RENDERER_AVAILABLE = False
 
@@ -149,7 +149,7 @@ class Design(db.Model):
 def init_db():
     with app.app_context():
         db.create_all()
-        print("✅ Database initialized")
+        print("Database initialized")
 
 
 @app.route('/api/auth/signup', methods=['POST'])
@@ -332,7 +332,7 @@ def serve_output(filename):
 def generate():
     try:
         print("\n" + "="*80)
-        print("🎨 GENERATION REQUEST RECEIVED")
+        print(" GENERATION REQUEST RECEIVED")
         print("="*80)
         
         room_type = request.form.get('roomType') or 'Living Hall'
@@ -350,7 +350,7 @@ def generate():
                 user_id = int(user_id)
                 user_obj = User.query.get(user_id)
             except Exception:
-                print("   ⚠️ user_id parse failed or user not found")
+                print(" user_id parse failed or user not found")
                 user_id = None
                 user_obj = None
 
@@ -407,10 +407,10 @@ def generate():
         
         if AI_RENDERER_AVAILABLE and ImageToImageRenderer is not None:
             try:
-                print("   🎨 Initializing AI renderer...")
+                print("Initializing AI renderer...")
                 renderer = ImageToImageRenderer()
                 
-                print("   🚀 Generating furnished design...")
+                print("Generating furnished design...")
                 # defensive call: renderer may return a path or write file directly
                 result = renderer.edit_room_image(
                     original_image_path=before_path,
@@ -421,30 +421,30 @@ def generate():
                 
                 # if renderer wrote to a different path, try to handle it
                 if os.path.exists(after_path):
-                    print(f"   ✅ AI generation successful to {after_path}")
+                    print(f"AI generation successful to {after_path}")
                 else:
                     # if result is a path and exists, copy it
                     if isinstance(result, str) and os.path.exists(result):
                         shutil.copy(result, after_path)
-                        print("   ✅ AI generation successful (from result path)")
+                        print("AI generation successful (from result path)")
                     else:
                         # fallback: copy original
-                        print("   ⚠️ AI returned nothing usable; copying original image as fallback")
+                        print(" AI returned nothing usable; copying original image as fallback")
                         shutil.copy(before_path, after_path)
                     
             except Exception as e:
-                print(f"   ❌ AI error: {e}")
+                print(f"AI error: {e}")
                 traceback.print_exc()
                 try:
                     shutil.copy(before_path, after_path)
                 except Exception as e2:
-                    print("   ❌ Failed to copy fallback image:", e2)
+                    print(" Failed to copy fallback image:", e2)
         else:
-            print("   ⚠️ AI not available, copying original")
+            print(" AI not available, copying original")
             shutil.copy(before_path, after_path)
 
         print(f"\n{'='*80}")
-        print("✅ GENERATION COMPLETE")
+        print("GENERATION COMPLETE")
         print(f"{'='*80}\n")
 
         return jsonify({
@@ -456,7 +456,7 @@ def generate():
         }), 200
 
     except Exception as e:
-        print(f"\n❌ ERROR: {e}")
+        print(f"\n ERROR: {e}")
         traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
@@ -470,16 +470,16 @@ if __name__ == '__main__':
     init_db()
     
     print("\n" + "="*80)
-    print("🏠 INTERIOAI BACKEND SERVER")
+    print(" INTERIOAI BACKEND SERVER")
     print("="*80)
-    print(f"✅ Database: interioai.db")
-    print(f"✅ AI Renderer: {'Available ✓' if AI_RENDERER_AVAILABLE else 'Not Available ✗'}")
+    print(f" Database: interioai.db")
+    print(f"AI Renderer: {'Available ✓' if AI_RENDERER_AVAILABLE else 'Not Available ✗'}")
     if AI_RENDERER_AVAILABLE:
-        print("   🎨 Stable Diffusion + ControlNet ready")
+        print("Stable Diffusion + ControlNet ready")
     else:
-        print("   ⚠️ AI models not loaded - will copy images only")
-    print("\n🌐 Server: http://localhost:5000")
+        print(" AI models not loaded - will copy images only")
+    print("\nServer: http://localhost:5000")
     print("="*80 + "\n")
     
-    print("\n🌐 Server starting on a free port (auto)...")
+    print("\nServer starting on a free port (auto)...")
     app.run(debug=True, host="127.0.0.1", port=0)
