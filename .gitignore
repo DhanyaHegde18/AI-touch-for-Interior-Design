@@ -6,7 +6,7 @@
 *.db
 
 # Outputs
-#output/
+output/
 runs/
 uploads/
 
